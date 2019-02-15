@@ -1,0 +1,32 @@
+version: '3'
+
+services: 
+  docker-mysql:
+    image: mysql:5.6
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=masterdb
+      - MYSQL_PASSWORD=12345
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+     - PMA_ARBITRARY=1
+    restart: always
+    ports:
+     - 8080:80
+    volumes:
+     - /sessions
+     
+  spring-boot-webapp:
+    image: users-app
+    depends_on:
+      - docker-mysql
+    ports:
+      - 8080:8080
+    environment:
+      - DATABASE_HOST=docker-mysql
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=12345
+      - DATABASE_NAME=masterdb  
+      - DATABASE_PORT=3306
